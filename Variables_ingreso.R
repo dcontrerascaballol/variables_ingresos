@@ -1,6 +1,7 @@
 
 
-#### PRUEBA N°1 ########################################
+#### Trabajo de Prediccion ########################################
+
 
 # MÓDULO 9: Mineria de Datos	      
 # NOMBRE PROFESOR    : Juan Carlos Herrera -
