@@ -1,7 +1,6 @@
 
 
-#### Trabajo de Prediccion ########################################
-
+#### Trabajo de Clasificacion  ########################################
 
 # MÓDULO 9: Mineria de Datos	      
 # NOMBRE PROFESOR    : Juan Carlos Herrera -
@@ -22,6 +21,9 @@ library(rpart.plot)
 library(ROCR)
 library(ggplot2)
 library(caTools)
+library(factoextra)
+library(pca3d)
+library(modelsummary)
 
 #### Lectura de Base de datos #### 
 
@@ -63,6 +65,7 @@ class(datos)
 #### Describir Base de datos ####
 
 dim(datos)
+
 # 32561    15
 
 # Se observan 32 561 registros, y 15 variables, entre ella, la de objetivo.
@@ -105,7 +108,7 @@ var_cat <- unlist(subset(List_var, tipo == "character", select = "nombre"), use.
 
 datos$workclass <- as.factor(datos$workclass)
 datos$education <- as.factor(datos$education)
-datos$marital-status <- as.factor(datos$marital-status)
+datos$`marital-status` <- as.factor(datos$`marital-status`)
 datos$occupation <- as.factor(datos$occupation)
 datos$relationship <- as.factor(datos$relationship)
 datos$race <- as.factor(datos$race)
@@ -122,7 +125,7 @@ glimpse(datos)
 #$ fnlwgt           <int> 77516, 83311, 215646, 234721, 338409, 284582, 16018…
 #$ education        <fct>  Bachelors,  Bachelors,  HS-grad,  11th,  Bachelors…
 #$ `education-num`  <int> 13, 13, 9, 7, 13, 14, 5, 9, 14, 13, 10, 13, 13, 12,…
-#$ `marital-status` <chr> " Never-married", " Married-civ-spouse", " Divorced…
+#$ `marital-status` <fct>  Never-married,  Married-civ-spouse,  Divorced,  Ma…
 #$ occupation       <fct>  Adm-clerical,  Exec-managerial,  Handlers-cleaners…
 #$ relationship     <fct>  Not-in-family,  Husband,  Not-in-family,  Husband,…
 #$ race             <fct>  White,  White,  White,  Black,  Black,  White,  Bl…
@@ -133,12 +136,90 @@ glimpse(datos)
 #$ `native-country` <fct>  United-States,  United-States,  United-States,  Un…
 #$ label            <fct>  <=50K,  <=50K,  <=50K,  <=50K,  <=50K,  <=50K,  <=…
 
+any(!complete.cases(datos))
+
+#[1] FALSE
+
+map_dbl(datos, .f = function(x){sum(is.na(x))})
+
+#age      workclass         fnlwgt      education  education-num 
+#0              0              0              0              0 
+#marital-status     occupation   relationship           race            sex 
+#0              0              0              0              0 
+#capital-gain   capital-loss hours-per-week native-country          label 
+#0              0              0              0              0 
+
+# Como se observa no hay valores Na, al leer la documentacion se expone que el uso de ? se expresa
+# en valores desconocidos.
+
 
 #### Analisis Descriptivo ####
 
+# Usamos summary dado a que tambien nos permite conocer informacion tanto de variables categoricas
+# como variables numericas.
+
+summary (datos)
+
+# age                    workclass             fnlwgt       
+#Min.   :17.00    Private         :22696   Min.   :  12285  
+#1st Qu.:28.00    Self-emp-not-inc: 2541   1st Qu.: 117827  
+#Median :37.00    Local-gov       : 2093   Median : 178356  
+#Mean   :38.58    ?               : 1836   Mean   : 189778  
+#3rd Qu.:48.00    State-gov       : 1298   3rd Qu.: 237051  
+#Max.   :90.00    Self-emp-inc    : 1116   Max.   :1484705  
+#                 (Other)          :  981   
+
+#education            education-num            marital-status 
+#HS-grad     :10501   Min.   : 1.00    Divorced             : 4443  
+#Some-college: 7291   1st Qu.: 9.00    Married-AF-spouse    :   23  
+#Bachelors   : 5355   Median :10.00    Married-civ-spouse   :14976  
+#Masters     : 1723   Mean   :10.08    Married-spouse-absent:  418  
+#Assoc-voc   : 1382   3rd Qu.:12.00    Never-married        :10683  
+#11th        : 1175   Max.   :16.00    Separated            : 1025  
+#(Other)      : 5134                   Widowed              :  993  
+
+# occupation                 relationship                    race      
+#Prof-specialty :4140    Husband       :13193    Amer-Indian-Eskimo:  311  
+#Craft-repair   :4099    Not-in-family : 8305    Asian-Pac-Islander: 1039  
+#Exec-managerial:4066    Other-relative:  981    Black             : 3124  
+#Adm-clerical   :3770    Own-child     : 5068    Other             :  271  
+#Sales          :3650    Unmarried     : 3446    White             :27816  
+#Other-service  :3295    Wife          : 1568                              
+#(Other)         :9541 
+
+#sex              capital-gain    capital-loss     hours-per-week 
+#Female:10771    Min.   :    0    Min.   :   0.0   Min.   : 1.00  
+#Male  :21790    1st Qu.:    0    1st Qu.:   0.0   1st Qu.:40.00  
+#Median :    0   Median :   0.0   Median :40.00  
+#Mean   : 1078   Mean   :  87.3   Mean   :40.44  
+#3rd Qu.:    0   3rd Qu.:   0.0   3rd Qu.:45.00  
+#Max.   :99999   Max.   :4356.0   Max.   :99.00  
+
+#  native-country          label      
+#United-States:29170    <=50K:24720  
+#Mexico       :  643    >50K : 7841  
+#?            :  583                 
+#Philippines  :  198                 
+#Germany      :  137                 
+#Canada       :  121                 
+#(Other)       : 1709        
+
+#### Tablas de Informacion ####
 
 
+table (datos$label,datos$sex)   
 
+#        Female  Male
+#<=50K    9592  15128
+#>50K     1179   6662
+
+proportions(table(datos$label,datos$sex), margin = 1)
+
+#        Female      Male
+#<=50K 0.3880259 0.6119741
+#>50K  0.1503635 0.8496365
+
+# Como se observa 
 
 
 
