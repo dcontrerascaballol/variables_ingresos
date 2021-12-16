@@ -2,7 +2,7 @@
 
 #### Trabajo de Clasificacion  ########################################
 
-# MÓDULO 9: Mineria de Datos	      
+# MÓDULO 9: Mineria de Datos	Aplicada      
 # NOMBRE PROFESOR    : Juan Carlos Herrera -
 # NOMBRE DEL ESTUDIANTES: Daniel Contreras 
 #                         Valentina Fernandez
@@ -219,7 +219,26 @@ proportions(table(datos$label,datos$sex), margin = 1)
 #<=50K 0.3880259 0.6119741
 #>50K  0.1503635 0.8496365
 
-# Como se observa 
+# En relacion a la distribucion por genero, se observa que hay un mayor % de hombres dentro
+# de las personas que se encuentran dentro del tramo de mayor ingreso. Ello, pudiera deberse a que
+# en la muestra                  
+
+proportions(table(datos$label,datos$sex), margin = 2)
+
+#        Female      Male
+#<=50K 0.8905394 0.6942634
+#>50K  0.1094606 0.3057366
+
+# Ahora al profundizar en el a nivel de genero
+# se presencia que un % menor de mujeres integran tal clase con respecto a sus pares. 
+
+# Tal elemento, nos pudiera dar primeras luces de la relacion de genero y el nivel de ingreso
+# Dado el periodo del censo utilizado 1994, pudiera ser intuituvo esta relacion, dado la menor tasa 
+# de insercion laboral del genero femenino. 
+
+
+
+
 
 
 
