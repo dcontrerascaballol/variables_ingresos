@@ -12,3 +12,5 @@ Cabe exponer que al googlear en la busqueda de la documentacion se encontraron d
 * https://rpubs.com/arjunkh/642940
 * https://www.kaggle.com/yipfafa/r-income-prediction-with-knn-nn-decision-tree
 * https://towardsdatascience.com/ensemble-learning-a-case-study-from-the-1994-us-census-database-8180342819fe
+
+Estos se agregar de forma de orientacion para los usuarios y usuarias, y no constituyen una guia utilizada, mas alla, de fines formativos.
