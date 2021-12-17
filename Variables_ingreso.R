@@ -3,7 +3,7 @@
 #### Trabajo de Clasificacion  ########################################
 
 # MÓDULO 9: Mineria de Datos	Aplicada      
-# NOMBRE PROFESOR    : Juan Carlos Herrera -
+# NOMBRE PROFESOR    : Juan Carlos Herrera - Jose Yan~ez
 # NOMBRE DEL ESTUDIANTES: Daniel Contreras 
 #                         Valentina Fernandez
 #                         Emilio Mun~oz
@@ -219,7 +219,8 @@ proportions(table(datos$label))
 #0.7591904 0.2408096 
 
 # Como se observa los que ganan sobre 50 mil dolares (dado la base de Censo US), son casi 24%
-# gran parte de los registros de la base tienen un ingreso menor a tal. 
+# gran parte de los registros de la base tienen un ingreso menor a tal. Lo que nos indica, que existe 
+# una nivel de observaciones desbalanceada a nivel de ingreso superiores a >50K. 
 
 
 table (datos$label,datos$sex)   
@@ -365,8 +366,34 @@ proportions(table(datos$label,datos$occupation), margin = 2)
 #<=50K      0.674884438 0.730684932   0.695043103       0.799624296
 #>50K       0.325115562 0.269315068   0.304956897       0.200375704
 
-#
+# Al observar los datos, nos percatamos que con respecto a su grupo los Gerentes o Gerentas (Exec-managerial)
+# con un 48% sobre el nivel de ingresos planteado de estudio, le sigue especialistas profesionales. 
 
+# Con respecto a las variables marital-status y relationship, dado a que atienden a un elemento eventualmente
+# similar de categorizar vinculos, parece pertienente agrupar algunos labels internos (ej. pareja versus solteria)
+# y posteriormente, solo utilizar una.
+
+table (datos$label,datos$race)  
+
+#       Amer-Indian-Eskimo  Asian-Pac-Islander  Black  Other  White
+#<=50K                 275                 763   2737    246  20699
+#>50K                   36                 276    387     25   7117
+
+
+proportions(table(datos$label,datos$race), margin = 2)
+
+#     Amer-Indian-Eskimo    Asian-Pac-Islander     Black      Other
+#<=50K          0.88424437          0.73435996 0.87612036 0.90774908
+#>50K           0.11575563          0.26564004 0.12387964 0.09225092
+
+#        White
+#<=50K 0.74414006
+#>50K  0.25585994
+
+# Ahora, con respecto a la variable raza, se observa, presumiblemente por la composicion de la base de datos
+# al profundizar con respecto al porcentaje de cada labels con respecto al nivel de ingreso
+# se aprecia que los originarios de Asia-Pacifico, tienen un 27% de su raza por sobre alto nivel de ingreso.
+# le sigue 'blancos' con 26%. 
 
 
 
