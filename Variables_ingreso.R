@@ -219,10 +219,74 @@ datos %>%
 #2 " >50K"       44.2     11.6      4006.     195. 
 
 # Como se observa, el promedio de edad y de tiempo educacional es mayor en quienes
-# tienen un mayor nivel de ingresos, lo mismo que la ganancia y perdida.
+# tienen un mayor nivel de ingresos, lo mismo que la ganancia y perdida de capitales.
+
+datos %>% 
+  group_by(label,sex) %>%
+  summarise(edad_prom= mean(age, na.rm=TRUE),
+            educ_prom= mean(`education-num`, na.rm=TRUE),
+            gain_prom=mean(`capital-gain`, na.rm=TRUE),
+            loss_prom=mean(`capital-loss`, na.rm=TRUE))
 
 
+#    label     sex       edad_prom educ_prom gain_prom loss_prom
+#     <fct>    <fct>        <dbl>     <dbl>     <dbl>     <dbl>
+#1 " <=50K" " Female"      36.2      9.82      122.      47.4
+#2 " <=50K" " Male"        37.1      9.45      166.      56.8
+#3 " >50K"  " Female"      42.1      11.8      4200.     174. 
+#4 " >50K"  " Male"        44.6      11.6      3972.     199. 
 
+# Como se aprecia, al agregar la variable de sexo (hoy seria genero), se observa
+# que a nivel del tramo de mejores ingresos hombres tienen mayor promedio de edad y perdida de capital,
+# por su parte, mujeres, tienen mayor ganancia promedio de capital, asi como, un leve mayor promedio
+# en el tiempo de formacion educacional. 
+
+# Asi mismo, en el tramo de menor ingreso, mujeres tambien poseen un mayor promedio en an~os de educacion,
+# mientras que hombres presentan mayor promedio en edad y ganancia y perdida de capital. 
+
+
+datos %>% 
+  group_by(label,race) %>%
+  summarise(edad_prom= mean(age, na.rm=TRUE),
+            educ_prom= mean(`education-num`, na.rm=TRUE),
+            gain_prom=mean(`capital-gain`, na.rm=TRUE),
+            loss_prom=mean(`capital-loss`, na.rm=TRUE))
+
+
+#     label    race                  edad_prom educ_prom gain_prom loss_prom
+#   <fct>    <fct>                     <dbl>     <dbl>     <dbl>     <dbl>
+#1 " <=50K" " Amer-Indian-Eskimo"      36.8     9.06     207.      20.4
+#2 " <=50K" " Asian-Pac-Islander"      36.1     10.4     114.      58.6
+#3 " <=50K" " Black"                   36.9     9.26     113.      44.4
+#4 " <=50K" " Other"                   32.6     8.56     72.2      59.6
+#5 " <=50K" " White"                   36.8     9.63     155.      54.5
+#6 " >50K"  " Amer-Indian-Eskimo"      39.7     11.2     3821.     140. 
+#7 " >50K"  " Asian-Pac-Islander"      42.4     12.4     5249.     204. 
+#8 " >50K"  " Black"                   43.7     11.1     4121.     173. 
+#9 " >50K"  " Other"                   41.4     11.6     9422.     75.5
+#10 " >50K" " White"                   44.4     11.6     3934.     197. 
+
+# Cabe destacar que los originarios de Asia Pacifico, presentan el mayor promedio de tiempo 
+# en formacion educacional en el mayor tramo de ingresos, superior, incluso al manifestado, al ver 
+# tal metrica a nivel de genero. Como se observa en los datos contiguos, tanto para genero femenino,
+# como masculino, los originarios de Asia Pacifico poseen mayor promedio de an~os educacionales. 
+
+datos %>% 
+  group_by(sex,race) %>%
+  summarise(educ_prom= mean(`education-num`, na.rm=TRUE))
+
+#      sex        race                educ_prom
+#      <fct>     <fct>                     <dbl>
+#1 " Female"  " Amer-Indian-Eskimo"      9.70
+#2 " Female"  " Asian-Pac-Islander"      10.4 
+#3 " Female"  " Black"                   9.55
+#4 " Female"  " Other"                   8.90
+#5 " Female"  " White"                   10.1 
+#6 " Male"    " Amer-Indian-Eskimo"      9.07
+#7 " Male"    " Asian-Pac-Islander"      11.2 
+#8 " Male"    " Black"                   9.42
+#9 " Male"    " Other"                   8.80
+#10 " Male"   " White"                   10.1 
 
 
 #### Tablas de Informacion ####
