@@ -236,10 +236,81 @@ proportions(table(datos$label,datos$sex), margin = 2)
 # Dado el periodo del censo utilizado 1994, pudiera ser intuituvo esta relacion, dado la menor tasa 
 # de insercion laboral del genero femenino. 
 
+table (datos$label,datos$workclass)  
+
+
+#        ?      Federal-gov  Local-gov  Never-worked  Private  Self-emp-inc
+#<=50K  1645          589       1476             7    17733           494
+#>50K    191          371        617             0     4963           622
+
+#           Self-emp-not-inc  State-gov  Without-pay
+#<=50K              1817        945           14
+#>50K                724        353            0
+
+
+proportions(table(datos$label,datos$workclass), margin = 2)
+
+#           ?      Federal-gov  Local-gov  Never-worked   Private
+#<=50K 0.8959695    0.6135417  0.7052078     1.0000000 0.7813271
+#>50K  0.1040305    0.3864583  0.2947922     0.0000000 0.2186729
+
+#       Self-emp-inc  Self-emp-not-inc  State-gov  Without-pay
+#<=50K     0.4426523         0.7150728  0.7280431    1.0000000
+#>50K      0.5573477         0.2849272  0.2719569    0.0000000
+
+
+# Ahora con respecto a categorias de trabajo, se visualiza que en comparacion con sus pares
+# el trabajador autonomo (emprendedor) es el que presenta una mayor proporcion, en terminos absolutos
+# son los que poseen cargos en el sector privado.
+
+proportions(table(datos$label,datos$workclass), margin = 1)
+
+#           ?       Federal-gov    Local-gov  Never-worked      Private
+#<=50K 0.0665453074 0.0238268608 0.0597087379  0.0002831715 0.7173543689
+#>50K  0.0243591379 0.0473153934 0.0786889427  0.0000000000 0.6329549802
+
+#         Self-emp-inc  Self-emp-not-inc State-gov  Without-pay
+#<=50K  0.0199838188      0.0735032362 0.0382281553 0.0005663430
+#>50K   0.0793266165      0.0923351613 0.0450197679 0.0000000000
+
+
+# Con respecto, de la composicion de las observaciones que componen la condicion de altos inresos,
+# se identifica que un alto porcentaje de ellos, 63%, provienen del componente privado (debiese ser mayor al sumar otros 
+# componente).
+
+
+table (datos$label,datos$education)  
+
+#       10th  11th  12th  1st-4th  5th-6th  7th-8th  9th    Assoc-acdm
+#<=50K   871  1115   400      162      317      606  487         802
+#>50K     62    60    33        6       16       40   27         265
+
+#         Assoc-voc  Bachelors  Doctorate  HS-grad  Masters  Preschool
+#<=50K       1021       3134        107     8826      764         51
+#>50K         361       2221        306     1675      959          0
+
+#           Prof-school  Some-college
+#<=50K          153          5904
+#>50K           423          1387
+
+
+proportions(table(datos$label,datos$education), margin = 2)
+
+#         10th       11th       12th      1st-4th    5th-6th    7th-8th
+#<=50K 0.93354770 0.94893617 0.92378753 0.96428571 0.95195195 0.93808050
+#>50K  0.06645230 0.05106383 0.07621247 0.03571429 0.04804805 0.06191950
+
+#         9th       Assoc-acdm  Assoc-voc  Bachelors  Doctorate  HS-grad
+#<=50K 0.94747082  0.75164011 0.73878437 0.58524743 0.25907990 0.84049138
+#>50K  0.05252918  0.24835989 0.26121563 0.41475257 0.74092010 0.15950862
+
+#         Masters  Preschool  Prof-school  Some-college
+#<=50K 0.44341265 1.00000000   0.26562500    0.80976546
+#>50K  0.55658735 0.00000000   0.73437500    0.19023454
+
+# Como se observa
 
 
 
-
-
-
+#### Graficos #### 
 
