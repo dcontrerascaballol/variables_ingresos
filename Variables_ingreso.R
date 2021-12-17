@@ -206,6 +206,22 @@ summary (datos)
 
 ## Analisis de Variables continuas##
 
+datos %>% 
+  group_by(label) %>%
+  summarise(edad_prom= mean(age, na.rm=TRUE),
+            educ_prom= mean(`education-num`, na.rm=TRUE),
+            gain_prom=mean(`capital-gain`, na.rm=TRUE),
+            loss_prom=mean(`capital-loss`, na.rm=TRUE))
+
+#   label    edad_prom educ_prom gain_prom loss_prom
+#    <fct>      <dbl>     <dbl>     <dbl>     <dbl>
+#1 " <=50K"      36.8     9.60      149.      53.1
+#2 " >50K"       44.2     11.6      4006.     195. 
+
+# Como se observa, el promedio de edad y de tiempo educacional es mayor en quienes
+# tienen un mayor nivel de ingresos, lo mismo que la ganancia y perdida.
+
+
 
 
 
@@ -394,7 +410,6 @@ proportions(table(datos$label,datos$race), margin = 2)
 # al profundizar con respecto al porcentaje de cada labels con respecto al nivel de ingreso
 # se aprecia que los originarios de Asia-Pacifico, tienen un 27% de su raza por sobre alto nivel de ingreso.
 # le sigue 'blancos' con 26%. 
-
 
 
 
