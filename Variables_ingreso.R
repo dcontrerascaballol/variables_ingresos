@@ -204,7 +204,22 @@ summary (datos)
 #Canada       :  121                 
 #(Other)       : 1709        
 
+## Analisis de Variables continuas##
+
+
+
+
 #### Tablas de Informacion ####
+table (datos$label)  
+#<=50K   >50K 
+#24720   7841 
+
+proportions(table(datos$label))
+#<=50K      >50K 
+#0.7591904 0.2408096 
+
+# Como se observa los que ganan sobre 50 mil dolares (dado la base de Censo US), son casi 24%
+# gran parte de los registros de la base tienen un ingreso menor a tal. 
 
 
 table (datos$label,datos$sex)   
@@ -308,7 +323,51 @@ proportions(table(datos$label,datos$education), margin = 2)
 #<=50K 0.44341265 1.00000000   0.26562500    0.80976546
 #>50K  0.55658735 0.00000000   0.73437500    0.19023454
 
-# Como se observa
+# Como se observa al comparar intra grupos con respecto a la clase de ingreso, se observa
+# que los doctorados y profesionales (ej. abogados, medicos, otros, fuente: https://guides.lib.uw.edu/bothell/gradschool/gradprof)
+# con cerca de 74% y 73% respectivamente, le siguen los master con 56%. 
+# A nivel de frecuencias absolutas se manifiesta que los bachiller (bachelor)
+
+
+table (datos$label,datos$occupation)  
+
+#       ?        Adm-clerical  Armed-Forces  Craft-repair  Exec-managerial
+#<=50K 1652          3263             8          3170             2098
+#>50K   191           507             1           929             1968
+
+#               Farming-fishing  Handlers-cleaners  Machine-op-inspct
+#<=50K              879               1284               1752
+#>50K               115                 86                250
+
+#             Other-service  Priv-house-serv  Prof-specialty  Protective-serv
+#<=50K           3158              148            2281              438
+#>50K             137                1            1859              211
+
+#       Sales      Tech-support     Transport-moving
+#<=50K   2667           645              1277
+#>50K     983           283               320
+
+proportions(table(datos$label,datos$occupation), margin = 2)
+
+#           ?        Adm-clerical  Armed-Forces  Craft-repair
+#<=50K 0.896364623   0.865517241   0.888888889   0.773359356
+#>50K  0.103635377   0.134482759   0.111111111   0.226640644
+
+#         Exec-managerial  Farming-fishing  Handlers-cleaners
+#<=50K      0.515986227      0.884305835        0.937226277
+#>50K       0.484013773      0.115694165        0.062773723
+
+#          Machine-op-inspct  Other-service  Priv-house-serv  Prof-specialty
+#<=50K        0.875124875    0.958421851      0.993288591     0.550966184
+#>50K         0.124875125    0.041578149      0.006711409     0.449033816
+
+#     Protective-serv       Sales     Tech-support  Transport-moving
+#<=50K      0.674884438 0.730684932   0.695043103       0.799624296
+#>50K       0.325115562 0.269315068   0.304956897       0.200375704
+
+#
+
+
 
 
 
