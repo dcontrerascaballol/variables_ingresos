@@ -1,5 +1,4 @@
 
-
 #### Trabajo de Clasificacion  ########################################
 
 # MÓDULO 9: Mineria de Datos	Aplicada      
@@ -101,8 +100,8 @@ table(List_var$tipo)
 
 # Obtenemos que de las 15 variables, 9 son categoricas. 
 
-var_cont <- unlist(subset(List_var, tipo == "integer", select = "nombre"), use.names = FALSE)
-var_cat <- unlist(subset(List_var, tipo == "character", select = "nombre"), use.names = FALSE)
+#var_cont <- unlist(subset(List_var, tipo == "integer", select = "nombre"), use.names = FALSE)
+#var_cat <- unlist(subset(List_var, tipo == "character", select = "nombre"), use.names = FALSE)
 
 # Convertir a factor 
 
@@ -274,6 +273,7 @@ title('Education Num v/s Age')
 
 
 #### Analisis Variables Categoricas ####
+
 table (datos$label)  
 #<=50K   >50K 
 #24720   7841 
@@ -286,6 +286,8 @@ proportions(table(datos$label))
 # gran parte de los registros de la base tienen un ingreso menor a tal. Lo que nos indica, que existe 
 # una nivel de observaciones desbalanceada a nivel de ingreso superiores a >50K. 
 
+
+# Ingreso por Genero
 
 table (datos$label,datos$sex)   
 
@@ -315,6 +317,8 @@ proportions(table(datos$label,datos$sex), margin = 2)
 # Tal elemento, nos pudiera dar primeras luces de la relacion de genero y el nivel de ingreso
 # Dado el periodo del censo utilizado 1994, pudiera ser intuituvo esta relacion, dado la menor tasa 
 # de insercion laboral del genero femenino. 
+
+# Ingreso por Workclass
 
 table (datos$label,datos$workclass)  
 
@@ -358,6 +362,7 @@ proportions(table(datos$label,datos$workclass), margin = 1)
 # se identifica que un alto porcentaje de ellos, 63%, provienen del componente privado (debiese ser mayor al sumar otros 
 # componente).
 
+# Ingreso por Education
 
 table (datos$label,datos$education)  
 
@@ -393,6 +398,7 @@ proportions(table(datos$label,datos$education), margin = 2)
 # con cerca de 74% y 73% respectivamente, le siguen los master con 56%. 
 # A nivel de frecuencias absolutas se manifiesta que los bachiller (bachelor)
 
+# Ingreso por Occupation
 
 table (datos$label,datos$occupation)  
 
@@ -426,7 +432,7 @@ proportions(table(datos$label,datos$occupation), margin = 2)
 #<=50K        0.875124875    0.958421851      0.993288591     0.550966184
 #>50K         0.124875125    0.041578149      0.006711409     0.449033816
 
-#     Protective-serv       Sales     Tech-support  Transport-moving
+#      Protective-serv       Sales     Tech-support  Transport-moving
 #<=50K      0.674884438 0.730684932   0.695043103       0.799624296
 #>50K       0.325115562 0.269315068   0.304956897       0.200375704
 
@@ -437,6 +443,8 @@ proportions(table(datos$label,datos$occupation), margin = 2)
 # similar de categorizar vinculos, parece pertienente agrupar algunos labels internos (ej. pareja versus solteria)
 # y posteriormente, solo utilizar una.
 
+# Ingreso por Raza
+
 table (datos$label,datos$race)  
 
 #       Amer-Indian-Eskimo  Asian-Pac-Islander  Black  Other  White
@@ -446,7 +454,7 @@ table (datos$label,datos$race)
 
 proportions(table(datos$label,datos$race), margin = 2)
 
-#     Amer-Indian-Eskimo    Asian-Pac-Islander     Black      Other
+#     Amer-Indian-Eskimo     Asian-Pac-Islander     Black      Other
 #<=50K          0.88424437          0.73435996 0.87612036 0.90774908
 #>50K           0.11575563          0.26564004 0.12387964 0.09225092
 
@@ -461,7 +469,7 @@ proportions(table(datos$label,datos$race), margin = 2)
 
 #### Analisis Cruzado de Variables####
 
-datos %>% 
+ingreso_carac <- datos %>% 
   group_by(label) %>%
   summarise(edad_prom= mean(age, na.rm=TRUE),
             educ_prom= mean(`education-num`, na.rm=TRUE),
@@ -472,6 +480,12 @@ datos %>%
 #    <fct>      <dbl>     <dbl>     <dbl>     <dbl>
 #1 " <=50K"      36.8     9.60      149.      53.1
 #2 " >50K"       44.2     11.6      4006.     195. 
+
+# Hacer tabla 
+opciones_forma <- c('striped', "bordered", 'hover', 'condensed', 'responsive')
+
+knitr::kable(ingreso_carac, booktabs = TRUE, caption = 'Edad Promedio de Sufragio por Genero') %>% 
+  kable_styling(bootstrap_options = opciones_forma, full_width = FALSE, font_size = 12)
 
 # Como se observa, el promedio de edad y de tiempo educacional es mayor en quienes
 # tienen un mayor nivel de ingresos, lo mismo que la ganancia y perdida de capitales.
@@ -545,3 +559,133 @@ datos %>%
 #8 " Male"    " Black"                   9.42
 #9 " Male"    " Other"                   8.80
 #10 " Male"   " White"                   10.1 
+
+
+
+datos %>% 
+  group_by(label,workclass) %>%
+  summarise(edad_prom= mean(age, na.rm=TRUE),
+            educ_prom= mean(`education-num`, na.rm=TRUE),
+            gain_prom=mean(`capital-gain`, na.rm=TRUE),
+            loss_prom=mean(`capital-loss`, na.rm=TRUE),
+            hours_prom=mean(`hours-per-week`, na.rm=TRUE))
+
+
+#      label    workclass           edad_prom educ_prom gain_prom loss_prom hours_prom
+#     <fct>    <fct>                 <dbl>     <dbl>     <dbl>     <dbl>      <dbl>
+#1 " <=50K" "Gov"                    39.6     10.6       160.     69.3      39.0
+#2 " <=50K" " Never-worked"          20.6     7.43        0       0         28.4
+#3 " <=50K" " Private"               35.1     9.45      137.      49.9       38.8
+#4 " <=50K" " Self-emp-inc"          43.2     10.2      178.      54.4       47.1
+#5 " <=50K" " Self-emp-not-inc"      44.4     9.70      221.      62.6       43.5
+#6 " <=50K" " Unknown"               39.3     9.02      159.      48.0       31.4
+#7 " <=50K" " Without-pay"           47.8     9.07      488.      0         32.7
+#8 " >50K"  "Gov"                    44.9     12.2      2290.     177.       43.9
+#9 " >50K"  " Private"               42.8     11.4      3575.     187.       45.5
+#10 " >50K"  " Self-emp-inc"         48.2     11.9      8607.     235.       50.2
+#11 " >50K"  " Self-emp-not-inc"     46.4     11.6      6065.     252.       46.7
+#12 " >50K"  " Unknown"              55.6     11.3      4462.     171.       36.1
+
+
+#### Limpieza y recodificacion de variables para modelo predictivo de arbol ####
+
+# Dado a los elementos expuestos los pasos en esta etapa son:
+
+## Modificar los signos de ? por el Unknown que la documentacion asume era el valor origina
+
+datos$occupation = gsub("?", "Unknown", datos$occupation, fixed = T )
+datos$occupation = as.factor(datos$occupation)
+
+
+datos$workclass = gsub("?", "Unknown", datos$workclass, fixed = T )
+datos$workclass = as.factor(datos$workclass )
+
+table(datos$workclass)
+
+### se verifica el cambio
+
+## Recodificaremos algunas levels de manera de poder mejorar la capacidad de clasificacion
+
+### En clases el profe mostro la alternativa
+
+#data_balanced_under$job_c <- ifelse(data_balanced_under$job %in% c("blue-collar", "entrepreneur", "housemaid", "services", "unknown"), 1,
+#                                    ifelse(data_balanced_under$job %in% c("self-employed", "technician"), 2,
+#                                    ifelse(data_balanced_under$job %in% c("admin."), 3,
+#                                    ifelse(data_balanced_under$job %in% c("management", "unemployed"), 4,5))))
+
+
+# Pero en ejemplos encontrados, nos parece pertinente usar (dado a que nos permite ir conociendo los script de manera continua):
+
+### Recodificacion de variable `marital-status`
+
+levels(datos$`marital-status`)
+
+#[1] " Divorced"             
+#[2] " Married-AF-spouse"    
+#[3] " Married-civ-spouse"   
+#[4] " Married-spouse-absent"
+#[5] " Never-married"        
+#[6] " Separated"            
+#[7] " Widowed" 
+
+levels(datos$`marital-status`)[c(2,3,4)] = 'Married'
+levels(datos$`marital-status`)[c(1,3,4,5)] = 'No Married'
+
+table(datos$`marital-status`)
+
+# Se configuran dos levels de la variable de estatus marital, de manera de facilitar la interpretacion para la clasificacion
+
+proportions(table(datos$label, datos$`marital-status`), margin=2)
+
+#     No Married    Married
+#<=50K 0.93554596 0.56307972
+#>50K  0.06445404 0.43692028
+
+# Se observa que casi el 40% de los 'casados' tienen un ingreso por sobre el tope de analisis 
+
+proportions(table(datos$label, datos$`marital-status`), margin=1)
+
+#     No Married   Married
+#<=50K  0.6488269 0.3511731
+#>50K   0.1409259 0.8590741
+
+#De los que ganan por sobre >50K un casi 86% son casados
+
+
+
+### Recodificacion de variable workclass
+
+levels(datos$workclass)
+
+#[1] " Federal-gov"      " Local-gov"        " Never-worked"    
+#[4] " Private"          " Self-emp-inc"     " Self-emp-not-inc"
+#[7] " State-gov"        " Unknown"          " Without-pay" 
+
+levels(datos$workclass)[c(1,2,7)] = 'Gov'
+levels(datos$workclass)[c(2:5,7)] = 'Private sector'
+
+# Los "Never Worked" se incluyen en los private sector, dado a que se manifestan horas por semanas en las tablas realizadas
+# los Unknown se dejan fuera se recomienda evaluar su eliminacion 
+
+table(datos$workclass)
+
+#  Gov      Private sector    Unknown 
+# 4351          26374           1836
+
+proportions(table(datos$label, datos$workclass), margin=2)
+
+#      Gov        Private sector   Unknown
+#<=50K 0.6917950      0.7607871  0.8959695
+#>50K  0.3082050      0.2392129  0.1040305
+
+proportions(table(datos$label, datos$workclass), margin=1)
+
+#       Gov        Private sector    Unknown
+#<=50K 0.12176375     0.81169094   0.06654531
+#>50K  0.17102410     0.80461676   0.02435914
+
+
+# Como se observa si bien, los empleados fiscales o publicos, tienen una proporcion mas alta con respecto a su clase dentro de los mejores ingresos
+# al mirar quienes componen el tramo de ingresos >50K , son principalmente personas que provienen de empleos del sector publico.
+
+
