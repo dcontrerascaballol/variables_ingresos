@@ -211,42 +211,66 @@ summary(datos$`hours-per-week`)
 #Min. 1st Qu.  Median    Mean  3rd Qu.    Max. 
 #1.00   40.00   40.00   40.44   45.00   99.00 
 
+# Se debe considerar el amplio rango de datos, y que el max, pudiera implicar un 
+# nivel que incluye incluso horas nocturnas y fin de semana
+
+describe(datos$age)
+
+
+#    vars  n   mean    sd   median trimmed mad  min max  range skew kurtosis
+#X1    1 32561 38.58 13.64     37   37.69 14.83  17  90    73 0.56    -0.17
+#    se
+#X1 0.08
+
+# Considerar que el minimo es bajo la edad legal de trabajo (debiera tener permiso paternal), 
+
 
 #### Graficos Variables Continuas ### 
 
+#Distribucion Education Num
 par(mfrow=c(2,3))
 boxplot(datos$`education-num`, data=datos)
 title('Education Num')
 
+#Distribucion Capital Gain'
 boxplot(datos$`capital-gain`, data=datos)
 title('Capital Gain')
 
+#Distribucion Capital Loss
 boxplot(datos$`capital-loss`, data=datos)
 title('Capital Loss')
 
+#Distribucion Hours per week
 boxplot(datos$`hours-per-week`, data=datos)
 title('Hours per week')
 
+#Distribucion Age
 boxplot(datos$age, data=datos)
 title('Age')
 
 ### Relaciones entre Variables continuas ###
 
+
 par(mfrow=c(2,3))
+# Relacion grafica Hours per Week y Education Num
 plot(datos$`hours-per-week`~ datos$`education-num`, data=datos)
-title('Education Num')
+title('Hours per week v/s Education Num')
 
-boxplot(datos$`capital-gain`, data=datos)
-title('Capital Gain')
+# Relacion grafica Capital Gain y Education Num
+plot(datos$`education-num`~ datos$`capital-gain`, data=datos)
+title('Education Num v/s Capital Gain')
 
-boxplot(datos$`capital-loss`, data=datos)
-title('Capital Loss')
+# Relacion grafica Capital Loss y Education Num
+plot(datos$`education-num`~datos$`capital-loss`, data=datos)
+title('Education Num v/s Capital Loss')
 
-boxplot(datos$`hours-per-week`, data=datos)
-title('Hours per week')
+# Relacion grafica Hours oer Week y Capital Gain
+plot(datos$`hours-per-week` ~ datos$`capital-gain`,data=datos)
+title('Hours per week v/s Capital Gain')
 
-boxplot(datos$age, data=datos)
-title('Age')
+# Relacion grafica Age y Education Num
+plot(datos$`education-num` ~  datos$age, data=datos)
+title('Education Num v/s Age')
 
 
 #### Analisis Variables Categoricas ####
