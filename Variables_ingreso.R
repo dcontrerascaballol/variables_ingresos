@@ -662,30 +662,35 @@ levels(datos$workclass)
 #[7] " State-gov"        " Unknown"          " Without-pay" 
 
 levels(datos$workclass)[c(1,2,7)] = 'Gov'
-levels(datos$workclass)[c(2:5,7)] = 'Private sector'
+levels(datos$workclass)[c(3:5)] = 'Private sector'
 
-# Los "Never Worked" se incluyen en los private sector, dado a que se manifestan horas por semanas en las tablas realizadas
-# los Unknown se dejan fuera se recomienda evaluar su eliminacion 
+# Los "Never Worked" si bien manifiestan horas de empleo se dejan fuera del sector privado lo mismo que los desconocidos,
+# y los sin pago. 
+
 
 table(datos$workclass)
 
-#  Gov      Private sector    Unknown 
-# 4351          26374           1836
+#Gov   Never-worked Private sector        Unknown    Without-pay 
+#4351              7          26353           1836             14 
 
 proportions(table(datos$label, datos$workclass), margin=2)
 
-#      Gov        Private sector   Unknown
-#<=50K 0.6917950      0.7607871  0.8959695
-#>50K  0.3082050      0.2392129  0.1040305
+#         Gov      Never-worked Private sector  Unknown  Without-pay
+#<=50K 0.6917950     1.0000000      0.7605965 0.8959695    1.0000000
+#>50K  0.3082050     0.0000000      0.2394035 0.1040305    0.0000000
 
 proportions(table(datos$label, datos$workclass), margin=1)
 
-#       Gov        Private sector    Unknown
-#<=50K 0.12176375     0.81169094   0.06654531
-#>50K  0.17102410     0.80461676   0.02435914
+#       Gov         Never-worked    Private sector  Unknown  Without-pay
+#<=50K 0.1217637540  0.0002831715   0.8108414239 0.0665453074 0.0005663430
+#>50K  0.1710241041  0.0000000000   0.8046167581 0.0243591379 0.0000000000
 
 
 # Como se observa si bien, los empleados fiscales o publicos, tienen una proporcion mas alta con respecto a su clase dentro de los mejores ingresos
 # al mirar quienes componen el tramo de ingresos >50K , son principalmente personas que provienen de empleos del sector publico.
 
 
+### Recodificacion de variable native country
+
+# Si bien hasta el momento no se ha usado por su alto nivel de diversidad de observaciones, la documentacion sugiere utilizar esta variable por 
+# sobre race, identificando dos opciones 
