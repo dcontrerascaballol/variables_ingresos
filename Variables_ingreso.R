@@ -288,6 +288,25 @@ datos %>%
 #9 " Male"    " Other"                   8.80
 #10 " Male"   " White"                   10.1 
 
+#### Graficos #### 
+
+par(mfrow=c(2,3))
+boxplot(datos$`education-num`, data=datos)
+title('Education Num')
+
+boxplot(datos$`capital-gain`, data=datos)
+title('Capital Gain')
+
+boxplot(datos$`capital-loss`, data=datos)
+title('Capital Loss')
+
+boxplot(datos$`hours-per-week`, data=datos)
+title('Hours per week')
+
+boxplot(datos$age, data=datos)
+title('Age')
+
+
 
 #### Tablas de Informacion ####
 table (datos$label)  
@@ -476,6 +495,4 @@ proportions(table(datos$label,datos$race), margin = 2)
 # le sigue 'blancos' con 26%. 
 
 
-
-#### Graficos #### 
 
