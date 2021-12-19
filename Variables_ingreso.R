@@ -113,12 +113,12 @@ table(List_var$tipo)
 
 datos$workclass <- as.factor(datos$workclass)
 datos$education <- as.factor(datos$education)
-datos$`marital-status` <- as.factor(datos$`marital-status`)
+datos$marital_status <- as.factor(datos$marital_status)
 datos$occupation <- as.factor(datos$occupation)
 datos$relationship <- as.factor(datos$relationship)
 datos$race <- as.factor(datos$race)
 datos$sex <- as.factor(datos$sex)
-datos$`native-country` <- as.factor(datos$`native-country`)
+datos$native_country <- as.factor(datos$native_country)
 datos$label <- as.factor(datos$label)
 
 #------------------------------------------------------------------------------#
@@ -640,8 +640,8 @@ datos$workclass = as.factor(datos$workclass )
 
 
 #------------------------------------------------------------------------------#
-datos$`native-country` = gsub("?", "Unknown", datos$`native-country`, fixed = T )
-datos$`native-country` = as.factor(datos$`native-country` )
+datos$native_country = gsub("?", "Unknown", datos$native_country, fixed = T )
+datos$native_country= as.factor(datos$native_country )
 
 
 ### se verifica el cambio
@@ -662,7 +662,7 @@ table(datos$workclass)
 
 ### Recodificacion de variable `marital-status`
 
-levels(datos$`marital-status`)
+levels(datos$marital_status)
 
 #[1] " Divorced"             
 #[2] " Married-AF-spouse"    
@@ -672,14 +672,14 @@ levels(datos$`marital-status`)
 #[6] " Separated"            
 #[7] " Widowed" 
 
-levels(datos$`marital-status`)[c(2,3,4)] = 'Married'
-levels(datos$`marital-status`)[c(1,3,4,5)] = 'No Married'
+levels(datos$marital_status)[c(2,3,4)] = 'Married'
+levels(datos$marital_status)[c(1,3,4,5)] = 'No Married'
 
-table(datos$`marital-status`)
+table(datos$marital_status)
 
 # Se configuran dos levels de la variable de estatus marital, de manera de facilitar la interpretacion para la clasificacion
 
-proportions(table(datos$label, datos$`marital-status`), margin=2)
+proportions(table(datos$label, datos$marital_status), margin=2)
 
 #     No Married    Married
 #<=50K 0.93554596 0.56307972
@@ -687,7 +687,7 @@ proportions(table(datos$label, datos$`marital-status`), margin=2)
 
 # Se observa que casi el 40% de los 'casados' tienen un ingreso por sobre el tope de analisis 
 
-proportions(table(datos$label, datos$`marital-status`), margin=1)
+proportions(table(datos$label, datos$marital_status), margin=1)
 
 #     No Married   Married
 #<=50K  0.6488269 0.3511731
@@ -740,7 +740,7 @@ proportions(table(datos$label, datos$workclass), margin=1)
 # Si bien hasta el momento no se ha usado por su alto nivel de diversidad de observaciones, la documentacion sugiere utilizar esta variable por 
 # sobre race, identificando dos opciones 
 
-table(datos$`native-country`)
+table(datos$native_country)
 
 
 #Cambodia                   Canada                    China 
@@ -773,8 +773,8 @@ table(datos$`native-country`)
 #583                          67                          16 
 
 
-levels(datos$`native-country`)[c(39)] = 'United-States'
-levels(datos$`native-country`)[c(1:38,41:42)] = 'Non-U.S.'
+levels(datos$native_country)[c(39)] = 'United-States'
+levels(datos$native_country)[c(1:38,41:42)] = 'Non-U.S.'
 levels(datos$`native-country`)
 
 
@@ -809,10 +809,8 @@ proportions(table(datos$label, datos$`native-country`), margin=1)
 
 
 datos$clase <- ifelse(datos$label == " >50K", 1, 0)
-data_final <- datos %>% 
-              rename(marital =`marital-status`)
-
-
+data_final <- datos 
+            
 
 
 #### Separacion de Base en Train y Validacion ####
@@ -823,9 +821,9 @@ data_final <- datos %>%
 
 
 library(caTools)
-set.seed(144)
+set.seed(123)
 
-split <- sample.split(data_final$clase, SplitRatio = 0.7)
+split <- sample.split(data_final$label, SplitRatio = 0.7)
 N <- dim(data_final)[1]
 
 
@@ -870,13 +868,18 @@ prop.table(table(valid$label, useNA = "always"))
 
 library(ROSE)
 
-table(train$label)
+table(train$clase)
 
 # Dada la sugerencia en clases de recursos computacionales se usa under sampling
 
-data_balan <- ovun.sample(label ~ ., train, method = "under", N = 2 * 5489, seed = 1)$data
+data_balan <- ovun.sample(clase ~ ., train, method = "under", N = 2 * 5489, seed = 1)$data
 
-table(data_balan$label)
+table(data_balan$clase)
+#0    1 
+#5489 5489 
+
+data_balan2 <-ovun.sample(clase ~ ., data = train, method = "over", N = 2 * 17304, seed = 1)$data
+table(data_balan2$clase)
 
 
 #### Modelo de Arbol de Decisiones ####
@@ -886,13 +889,79 @@ table(data_balan$label)
 
 library(rpart)
 library(rpart.plot)
+library(sqldf)
+library(pROC)
+library(ggplot2)
+library(dplyr)
+library(caret)
+library(ROCR)
+library(devtools)
+library(MASS)
 
-arbol<- rpart(label~.,data=train)
+
+#------------------------------------------------------------------------------#
+
+
+# Arbol optimizado (poda)
+
+tree_fit<-train(label~ ., data = data_balan2, method = "rpart")
+tree_fit$finalModel
+rpart.plot(tree_fit$finalModel)
+
+#n= 34608 
+
+#node), split, n, loss, yval, (yprob)
+#* denotes terminal node
+
+#1) root 34608 17304  <=50K (0.5000000 0.5000000)  
+#2) clase< 0.5 17304     0  <=50K (1.0000000 0.0000000) *
+# 3) clase>=0.5 17304     0  >50K (0.0000000 1.0000000) *
+
+tree_fit_2<-train(clase~ ., data = data_balan, method = "rpart")
+tree_fit_2$finalModel
+rpart.plot(tree_fit$finalModel)
+
+#n= 10978 
+
+#node), split, n, loss, yval, (yprob)
+#* denotes terminal node
+
+#1) root 10978 5489  <=50K (0.5000000 0.5000000)  
+#2) clase< 0.5 5489    0  <=50K (1.0000000 0.0000000) *
+#3) clase>=0.5 5489    0  >50K (0.0000000 1.0000000) *
+
+#------------------------------------------------------------------------------#
+# Arbol no optimizado
+tree_fit_3<-train(clase ~ ., 
+                data = data_balan2, 
+                method = "rpart", 
+                trControl=trainControl(method="none"),
+                tuneGrid=data.frame(cp=0.01))
+tree_fit_3$finalModel
+rpart.plot(tree_fit_3$finalModel)
+#------------------------------------------------------------------------------#
+
+nad <- 10
+#------------------------------------------------------------------------------#
+#Arbolización Maximal
+arbol = rpart(clase~ ., data_balan2, 
+              parms = list(split = 'gini'),
+              control = rpart.control(minbucket = nad,
+                                      minsplit = round(nad/3, 0), 
+                                      maxdepth = 6,
+                                      cp = 0,
+                                      xval = 10))
+
 print(arbol)
-
-
 rpart.plot(arbol)
 
+#------------------------------------------------------------------------------#
+
+plotcp(tree_fit$finalModel)
+
+
+Ctree1 = rpart(label~., data=data_final, method = "class", model = TRUE,control = rpart.control(minsplit = 1000))
+rpart.plot(Ctree1)
 
 #------------------------------------------------------------------------------#
 
@@ -901,7 +970,7 @@ rpart.plot(arbol)
 predic = valid$label
 est.arbol = predict(arbol, valid, type= "class")
 
-confuma = confusionMatrix(reference = valid$label, data = est.arbol, positive = '>50K')
+confuma = confusionMatrix(reference = valid$label, data = est.arbol, positive = '1')
 
 #### Validacion Cruzada ####
 
