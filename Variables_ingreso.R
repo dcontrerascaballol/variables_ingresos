@@ -602,6 +602,10 @@ datos$workclass = as.factor(datos$workclass )
 
 table(datos$workclass)
 
+datos$`native-country` = gsub("?", "Unknown", datos$`native-country`, fixed = T )
+datos$`native-country` = as.factor(datos$`native-country` )
+
+
 ### se verifica el cambio
 
 ## Recodificaremos algunas levels de manera de poder mejorar la capacidad de clasificacion
@@ -694,3 +698,74 @@ proportions(table(datos$label, datos$workclass), margin=1)
 
 # Si bien hasta el momento no se ha usado por su alto nivel de diversidad de observaciones, la documentacion sugiere utilizar esta variable por 
 # sobre race, identificando dos opciones 
+
+table(datos$`native-country`)
+
+
+#Cambodia                   Canada                    China 
+#19                         121                          75 
+#Columbia                    Cuba          Dominican-Republic 
+#59                          95                          70 
+#Ecuador                 El-Salvador                     England 
+#28                         106                          90 
+#France                     Germany                      Greece 
+#29                         137                          29 
+#Guatemala                  Haiti              Holand-Netherlands 
+#64                          44                           1 
+#Honduras                    Hong                     Hungary 
+#13                          20                          13 
+#India                        Iran                     Ireland 
+#100                          43                          24 
+#Italy                     Jamaica                       Japan 
+#73                          81                          62 
+#Laos                      Mexico                   Nicaragua 
+#18                         643                          34 
+#Outlying-US(Guam-USVI-etc) Peru                 Philippines 
+#14                          31                         198 
+#Poland                    Portugal                 Puerto-Rico 
+#60                          37                         114 
+#Scotland                    South                      Taiwan 
+#12                          80                          51 
+#Thailand             Trinadad&Tobago               United-States 
+#18                          19                       29170 
+#Unknown                     Vietnam                 Yugoslavia 
+#583                          67                          16 
+
+
+levels(datos$`native-country`)[c(39)] = 'United-States'
+levels(datos$`native-country`)[c(1:38,41:42)] = 'Non-U.S.'
+levels(datos$`native-country`)
+
+
+table(datos$`native-country`)
+
+#Non-U.S.  United-States       Unknown 
+#2808         29170           583 
+
+proportions(table(datos$label, datos$`native-country`), margin=2)
+
+#        Non-U.S. United-States Unknown
+#<=50K 0.8133903     0.7541652 0.7495712
+#>50K  0.1866097     0.2458348 0.2504288
+
+
+proportions(table(datos$label, datos$`native-country`), margin=1)
+
+#       Non-U.S.  United-States    Unknown
+#<=50K 0.09239482    0.88992718 0.01767799
+#>50K  0.06682821    0.91455172 0.01862007
+
+
+
+
+
+
+#### Base para aplicar modelo predictivo de arbol ####
+
+# Se elimina variable relationship, al estimar que recogemos informacion desde marital status, lo mismo pasa con native country y race.
+# Si bien, en algun momento se considero su uso (por ello recodificacion), occupation, se descarta en este modelo, esperamos usarlo en el futuro. 
+# Conjuntamente, education se descarta por education num, y fnlwgt. 
+
+data_final <- datos%>% 
+              select(-relationship, -race, -occupation, -education, -fnlwgt)
+
