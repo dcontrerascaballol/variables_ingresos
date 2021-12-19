@@ -51,8 +51,8 @@ datos <-  read.table(url,sep=",",
 # la Informacion esta contenida en https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.names
 
 
-colnames(datos) <-  c('age', 'workclass', 'fnlwgt', 'education', 'education-num', 'marital-status', 'occupation',
-                      'relationship', 'race', 'sex', 'capital-gain', 'capital-loss', 'hours-per-week', 'native-country', 'label')
+colnames(datos) <-  c('age', 'workclass', 'fnlwgt', 'education', 'education_num', 'marital_status', 'occupation',
+                      'relationship', 'race', 'sex', 'capital_gain', 'capital_loss', 'hours_per_week', 'native_country', 'label')
 
 View(datos)
 
@@ -68,6 +68,9 @@ dim(datos)
 # 32561    15
 
 # Se observan 32 561 registros, y 15 variables, entre ella, la de objetivo.
+
+
+#------------------------------------------------------------------------------#
 
 str(datos)
 
@@ -89,6 +92,7 @@ str(datos)
 #$ native-country: chr  " United-States" " United-States" " United-States" " United-States" ...
 #$ label         : chr  " <=50K" " <=50K" " <=50K" " <=50K"
 
+#------------------------------------------------------------------------------#
 
 List_var <- data.frame(nombre = names(datos), 
                        tipo = sapply(datos, class))
@@ -103,6 +107,8 @@ table(List_var$tipo)
 #var_cont <- unlist(subset(List_var, tipo == "integer", select = "nombre"), use.names = FALSE)
 #var_cat <- unlist(subset(List_var, tipo == "character", select = "nombre"), use.names = FALSE)
 
+#------------------------------------------------------------------------------#
+
 # Convertir a factor 
 
 datos$workclass <- as.factor(datos$workclass)
@@ -114,6 +120,8 @@ datos$race <- as.factor(datos$race)
 datos$sex <- as.factor(datos$sex)
 datos$`native-country` <- as.factor(datos$`native-country`)
 datos$label <- as.factor(datos$label)
+
+#------------------------------------------------------------------------------#
 
 glimpse(datos)
 
@@ -135,6 +143,7 @@ glimpse(datos)
 #$ `native-country` <fct>  United-States,  United-States,  United-States,  Un…
 #$ label            <fct>  <=50K,  <=50K,  <=50K,  <=50K,  <=50K,  <=50K,  <=…
 
+#------------------------------------------------------------------------------#
 any(!complete.cases(datos))
 
 #[1] FALSE
@@ -151,6 +160,7 @@ map_dbl(datos, .f = function(x){sum(is.na(x))})
 # Como se observa no hay valores Na, al leer la documentacion se expone que el uso de ? se expresa
 # en valores desconocidos.
 
+#------------------------------------------------------------------------------#
 
 #### Analisis Descriptivo ####
 
@@ -213,6 +223,8 @@ summary(datos$`hours-per-week`)
 # Se debe considerar el amplio rango de datos, y que el max, pudiera implicar un 
 # nivel que incluye incluso horas nocturnas y fin de semana
 
+#------------------------------------------------------------------------------#
+
 describe(datos$age)
 
 
@@ -223,6 +235,7 @@ describe(datos$age)
 
 # Considerar que el minimo es bajo la edad legal de trabajo (debiera tener permiso paternal), 
 
+#------------------------------------------------------------------------------#
 
 #### Graficos Variables Continuas ### 
 
@@ -274,6 +287,8 @@ title('Education Num v/s Age')
 
 #### Analisis Variables Categoricas ####
 
+# Distribucion de Ingresos ##
+
 table (datos$label)  
 #<=50K   >50K 
 #24720   7841 
@@ -286,6 +301,7 @@ proportions(table(datos$label))
 # gran parte de los registros de la base tienen un ingreso menor a tal. Lo que nos indica, que existe 
 # una nivel de observaciones desbalanceada a nivel de ingreso superiores a >50K. 
 
+#------------------------------------------------------------------------------#
 
 # Ingreso por Genero
 
@@ -317,6 +333,8 @@ proportions(table(datos$label,datos$sex), margin = 2)
 # Tal elemento, nos pudiera dar primeras luces de la relacion de genero y el nivel de ingreso
 # Dado el periodo del censo utilizado 1994, pudiera ser intuituvo esta relacion, dado la menor tasa 
 # de insercion laboral del genero femenino. 
+
+#------------------------------------------------------------------------------#
 
 # Ingreso por Workclass
 
@@ -362,6 +380,8 @@ proportions(table(datos$label,datos$workclass), margin = 1)
 # se identifica que un alto porcentaje de ellos, 63%, provienen del componente privado (debiese ser mayor al sumar otros 
 # componente).
 
+#------------------------------------------------------------------------------#
+
 # Ingreso por Education
 
 table (datos$label,datos$education)  
@@ -397,6 +417,8 @@ proportions(table(datos$label,datos$education), margin = 2)
 # que los doctorados y profesionales (ej. abogados, medicos, otros, fuente: https://guides.lib.uw.edu/bothell/gradschool/gradprof)
 # con cerca de 74% y 73% respectivamente, le siguen los master con 56%. 
 # A nivel de frecuencias absolutas se manifiesta que los bachiller (bachelor)
+
+#------------------------------------------------------------------------------#
 
 # Ingreso por Occupation
 
@@ -443,6 +465,8 @@ proportions(table(datos$label,datos$occupation), margin = 2)
 # similar de categorizar vinculos, parece pertienente agrupar algunos labels internos (ej. pareja versus solteria)
 # y posteriormente, solo utilizar una.
 
+#------------------------------------------------------------------------------#
+
 # Ingreso por Raza
 
 table (datos$label,datos$race)  
@@ -450,7 +474,6 @@ table (datos$label,datos$race)
 #       Amer-Indian-Eskimo  Asian-Pac-Islander  Black  Other  White
 #<=50K                 275                 763   2737    246  20699
 #>50K                   36                 276    387     25   7117
-
 
 proportions(table(datos$label,datos$race), margin = 2)
 
@@ -467,6 +490,8 @@ proportions(table(datos$label,datos$race), margin = 2)
 # se aprecia que los originarios de Asia-Pacifico, tienen un 27% de su raza por sobre alto nivel de ingreso.
 # le sigue 'blancos' con 26%. 
 
+#------------------------------------------------------------------------------#
+
 #### Analisis Cruzado de Variables####
 
 ingreso_carac <- datos %>% 
@@ -482,6 +507,7 @@ ingreso_carac <- datos %>%
 #2 " >50K"       44.2     11.6      4006.     195. 
 
 # Hacer tabla 
+
 opciones_forma <- c('striped', "bordered", 'hover', 'condensed', 'responsive')
 
 knitr::kable(ingreso_carac, booktabs = TRUE, caption = 'Edad Promedio de Sufragio por Genero') %>% 
@@ -489,6 +515,10 @@ knitr::kable(ingreso_carac, booktabs = TRUE, caption = 'Edad Promedio de Sufragi
 
 # Como se observa, el promedio de edad y de tiempo educacional es mayor en quienes
 # tienen un mayor nivel de ingresos, lo mismo que la ganancia y perdida de capitales.
+
+#------------------------------------------------------------------------------#
+
+## Ingresos por genero ##
 
 datos %>% 
   group_by(label,sex) %>%
@@ -513,6 +543,9 @@ datos %>%
 # Asi mismo, en el tramo de menor ingreso, mujeres tambien poseen un mayor promedio en an~os de educacion,
 # mientras que hombres presentan mayor promedio en edad y ganancia y perdida de capital. 
 
+#------------------------------------------------------------------------------#
+
+## Ingresos por raza ##
 
 datos %>% 
   group_by(label,race) %>%
@@ -560,7 +593,9 @@ datos %>%
 #9 " Male"    " Other"                   8.80
 #10 " Male"   " White"                   10.1 
 
+#------------------------------------------------------------------------------#
 
+## Ingresos por workclass ##
 
 datos %>% 
   group_by(label,workclass) %>%
@@ -586,27 +621,32 @@ datos %>%
 #11 " >50K"  " Self-emp-not-inc"     46.4     11.6      6065.     252.       46.7
 #12 " >50K"  " Unknown"              55.6     11.3      4462.     171.       36.1
 
+#------------------------------------------------------------------------------#
 
 #### Limpieza y recodificacion de variables para modelo predictivo de arbol ####
 
 # Dado a los elementos expuestos los pasos en esta etapa son:
 
-## Modificar los signos de ? por el Unknown que la documentacion asume era el valor origina
+## Modificar los signos de ? por el Unknown que la documentacion asume era el valor original
 
 datos$occupation = gsub("?", "Unknown", datos$occupation, fixed = T )
 datos$occupation = as.factor(datos$occupation)
 
+#------------------------------------------------------------------------------#
 
 datos$workclass = gsub("?", "Unknown", datos$workclass, fixed = T )
 datos$workclass = as.factor(datos$workclass )
 
-table(datos$workclass)
 
+
+#------------------------------------------------------------------------------#
 datos$`native-country` = gsub("?", "Unknown", datos$`native-country`, fixed = T )
 datos$`native-country` = as.factor(datos$`native-country` )
 
 
 ### se verifica el cambio
+
+table(datos$workclass)
 
 ## Recodificaremos algunas levels de manera de poder mejorar la capacidad de clasificacion
 
@@ -655,7 +695,7 @@ proportions(table(datos$label, datos$`marital-status`), margin=1)
 
 #De los que ganan por sobre >50K un casi 86% son casados
 
-
+#------------------------------------------------------------------------------#
 
 ### Recodificacion de variable workclass
 
@@ -689,6 +729,7 @@ proportions(table(datos$label, datos$workclass), margin=1)
 #<=50K 0.1217637540  0.0002831715   0.8108414239 0.0665453074 0.0005663430
 #>50K  0.1710241041  0.0000000000   0.8046167581 0.0243591379 0.0000000000
 
+#------------------------------------------------------------------------------#
 
 # Como se observa si bien, los empleados fiscales o publicos, tienen una proporcion mas alta con respecto a su clase dentro de los mejores ingresos
 # al mirar quienes componen el tramo de ingresos >50K , son principalmente personas que provienen de empleos del sector publico.
@@ -756,7 +797,7 @@ proportions(table(datos$label, datos$`native-country`), margin=1)
 #>50K  0.06682821    0.91455172 0.01862007
 
 
-
+#------------------------------------------------------------------------------#
 
 
 
@@ -766,6 +807,105 @@ proportions(table(datos$label, datos$`native-country`), margin=1)
 # Si bien, en algun momento se considero su uso (por ello recodificacion), occupation, se descarta en este modelo, esperamos usarlo en el futuro. 
 # Conjuntamente, education se descarta por education num, y fnlwgt. 
 
-data_final <- datos%>% 
-              select(-relationship, -race, -occupation, -education, -fnlwgt)
+
+datos$clase <- ifelse(datos$label == " >50K", 1, 0)
+data_final <- datos %>% 
+              rename(marital =`marital-status`)
+
+
+
+
+#### Separacion de Base en Train y Validacion ####
+
+## En esta etapa se siguen las recomendaciones entregadas en clases, en diversas bibliografias existen otras sugerencias de semillas, 
+## Ej. 123, como de metodos para conformar data de train y validacion, asi como, porcentaje de datos para train. 
+
+
+
+library(caTools)
+set.seed(144)
+
+split <- sample.split(data_final$clase, SplitRatio = 0.7)
+N <- dim(data_final)[1]
+
+
+#------------------------------------------------------------------------------#
+
+#Muestra de Entrenamiento
+train <- subset(data_final, split == TRUE)
+n_train <- dim(train)[1]
+
+Porc_train <- n_train/N
+Porc_train
+
+#[1] 0.7000092
+
+prop.table(table(train$clase, useNA = "always"))
+
+#    <=50K      >50K      <NA> 
+#  0.7591805 0.2408195 0.0000000 
+
+#------------------------------------------------------------------------------#
+
+#Muestra de validación
+
+valid <- subset(data_final, split == FALSE)
+n_val <- dim(valid)[1]
+
+Porc_val <- n_val/N
+Porc_val
+
+#[1] 0.2999908
+
+prop.table(table(valid$label, useNA = "always"))
+
+#    <=50K      >50K      <NA> 
+#  0.7592138 0.2407862 0.0000000 
+
+
+#------------------------------------------------------------------------------#
+## Balanceo de Muestras ##
+
+### Dado la distribucion de la variable a buscar 
+
+library(ROSE)
+
+table(train$label)
+
+# Dada la sugerencia en clases de recursos computacionales se usa under sampling
+
+data_balan <- ovun.sample(label ~ ., train, method = "under", N = 2 * 5489, seed = 1)$data
+
+table(data_balan$label)
+
+
+#### Modelo de Arbol de Decisiones ####
+
+
+## Configuracion del Arbol de Decisiones ##
+
+library(rpart)
+library(rpart.plot)
+
+arbol<- rpart(label~.,data=train)
+print(arbol)
+
+
+rpart.plot(arbol)
+
+
+#------------------------------------------------------------------------------#
+
+## Predicciones ##
+
+predic = valid$label
+est.arbol = predict(arbol, valid, type= "class")
+
+confuma = confusionMatrix(reference = valid$label, data = est.arbol, positive = '>50K')
+
+#### Validacion Cruzada ####
+
+
+
+
 
